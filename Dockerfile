@@ -27,25 +27,4 @@ COPY --from=build /var/www/html /var/www/html
 
 EXPOSE 8000
 
-# Rodar migrations automaticamente no deploy
-RUN php artisan migrate --force || true
-
-# Criar usuário padrão automaticamente no deploy
-RUN php -r "
-require 'vendor/autoload.php';
-$app = require_once 'bootstrap/app.php';
-$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
-$kernel->bootstrap();
-use App\Models\User;
-User::updateOrCreate(
-    ['email' => 'usuario@glowtime.com'],
-    [
-        'name' => 'Usuario',
-        'password' => bcrypt('123456')
-    ]
-);
-"
-RUN php -r "require 'vendor/autoload.php'; \$app = require 'bootstrap/app.php'; \$kernel = \$app->make(Illuminate\\Contracts\\Console\\Kernel::class); \$kernel->bootstrap(); App\\Models\\User::updateOrCreate(['email' => 'usuario@glowtime.com'], ['name' => 'Usuario', 'password' => bcrypt('123456')]);"
-
-
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
