@@ -36,10 +36,8 @@ COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 # 🔹 Cria o diretório correto do socket do PHP-FPM
-RUN mkdir -p /var/run/php && \
-    chown -R www-data:www-data /var/run/php && \
-    chmod -R 775 /var/run/php && \
-    chmod -R 775 storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
+
 
 EXPOSE 80
 
