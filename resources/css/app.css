@@ -1,8 +1,3 @@
-/* FullCalendar v6 Styles */
-@import "@fullcalendar/core/index.css";
-@import "@fullcalendar/daygrid/index.css";
-@import "@fullcalendar/timegrid/index.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
