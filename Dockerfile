@@ -1,53 +1,45 @@
-# =========================
-# 1) BUILD (Composer + NPM)
-# =========================
-FROM php:8.2-fpm AS build
+# ------------------------------------------------------
+# STAGE 1 - Build (Composer + NPM)
+# ------------------------------------------------------
+FROM php:8.2-fpm AS builder
 
-# Dependências
 RUN apt-get update && apt-get install -y \
     git unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
     nodejs npm \
     && docker-php-ext-install pdo_mysql zip
 
-# Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 COPY . .
 
-# Instalar dependências Laravel
 RUN composer install --no-dev --optimize-autoloader
+RUN npm install
+RUN npm run build
 
-# Build do Vite
-RUN npm install && npm run build
 
-
-# =========================
-# 2) RUNTIME (Nginx + PHP-FPM)
-# =========================
+# ------------------------------------------------------
+# STAGE 2 - Runtime (Nginx + PHP-FPM)
+# ------------------------------------------------------
 FROM php:8.2-fpm
 
-# Dependências de runtime + Nginx
 RUN apt-get update && apt-get install -y \
-    nginx libzip-dev zip \
+    nginx supervisor libzip-dev zip \
     && docker-php-ext-install pdo_mysql zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Diretório Laravel
 WORKDIR /var/www/html
 
-# Copiar app compilado
-COPY --from=build /var/www/html /var/www/html
-
-# Copiar configuração do Nginx
+COPY --from=builder /var/www/html /var/www/html
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 
-# Permissões
-RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html
+# Supervisor controla nginx + php-fpm juntos
+COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-# Expõe a porta do Nginx
-EXPOSE 80
+RUN mkdir -p /run/php \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
 
-# Iniciar PHP-FPM + NGINX juntos
-CMD service nginx start && php-fpm
+EXPOSE $PORT
+
+CMD ["/usr/bin/supervisord", "-n"]
