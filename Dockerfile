@@ -38,7 +38,6 @@ RUN mkdir -p /run/php \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
-# Railway usa variável de ambiente PORT automaticamente
-EXPOSE $PORT
+EXPOSE 80   # ✔ Corrigido!
 
 CMD ["/usr/bin/supervisord", "-n"]
