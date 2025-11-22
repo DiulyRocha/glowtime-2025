@@ -34,6 +34,11 @@
         }
     },
     "scripts": {
+        "post-install-cmd": [
+            "@php artisan key:generate --force",
+            "@php artisan migrate --force",
+            "@php artisan optimize"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
