@@ -1,37 +1,39 @@
-# === Etapa 1: Build ===
+# ----------- BASE PHP (Build stage) ---------------
 FROM php:8.2-fpm AS build
 
-# Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
     git unzip libzip-dev libpng-dev libonig-dev libxml2-dev \
     nodejs npm \
     && docker-php-ext-install pdo_mysql zip
 
-# Instala Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Copia projeto
 WORKDIR /var/www/html
 COPY . .
 
-# Instala dependências do Laravel
 RUN composer install --no-dev --optimize-autoloader
-
-# Instala dependências do frontend e compila o Vite
 RUN npm install && npm run build
 
-# === Etapa 2: Produção ===
+# ----------- RUNTIME: NGINX + PHP-FPM ---------------
 FROM php:8.2-fpm
+
+RUN apt-get update && apt-get install -y \
+    nginx supervisor libzip-dev zip \
+    && docker-php-ext-install pdo_mysql zip
 
 WORKDIR /var/www/html
 
-# Instala extensões PHP
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    && docker-php-ext-install pdo_mysql zip
-
-# Copia arquivos do build
 COPY --from=build /var/www/html /var/www/html
 
-# Comando final: iniciar PHP-FPM
-CMD ["php-fpm"]
+# Configuração NGINX
+RUN rm -rf /etc/nginx/sites-enabled/default
+RUN rm -rf /etc/nginx/conf.d/default.conf
+
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Configuração supervisor
+COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+
+EXPOSE 8000
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisor.conf"]
