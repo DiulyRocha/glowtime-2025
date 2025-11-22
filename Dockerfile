@@ -32,14 +32,13 @@ WORKDIR /var/www/html
 
 COPY --from=builder /var/www/html /var/www/html
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
-
-# Supervisor controla nginx + php-fpm juntos
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
 RUN mkdir -p /run/php \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
+# Railway usa variável de ambiente PORT automaticamente
 EXPOSE $PORT
 
 CMD ["/usr/bin/supervisord", "-n"]
