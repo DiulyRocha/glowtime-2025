@@ -14,7 +14,8 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build
 
 
 # ------------------------------------------------------
@@ -30,12 +31,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /var/www/html
 
 COPY --from=builder /var/www/html /var/www/html
+
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-# Corrige permissões
-RUN mkdir -p /run/php && \
-    chown -R www-data:www-data /var/www/html && \
+# 🔹 Cria o diretório correto do socket do PHP-FPM
+RUN mkdir -p /var/run/php && \
+    chown -R www-data:www-data /var/run/php && \
+    chmod -R 775 /var/run/php && \
     chmod -R 775 storage bootstrap/cache
 
 EXPOSE 80
