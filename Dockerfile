@@ -27,4 +27,7 @@ COPY --from=build /var/www/html /var/www/html
 
 EXPOSE 8000
 
+# Rodar migrations automaticamente no deploy
+RUN php artisan migrate --force || true
+
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
