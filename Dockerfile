@@ -14,8 +14,7 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 
 # ------------------------------------------------------
@@ -34,10 +33,11 @@ COPY --from=builder /var/www/html /var/www/html
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-RUN mkdir -p /run/php \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
+# Corrige permissões
+RUN mkdir -p /run/php && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 775 storage bootstrap/cache
 
-EXPOSE 80   # ✔ Corrigido!
+EXPOSE 80
 
 CMD ["/usr/bin/supervisord", "-n"]
