@@ -120,15 +120,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    /*
-    |--------------------------------------------------------------------------
-    | ✉️ Teste de Envio de E-mail
-    |--------------------------------------------------------------------------
-    */
-   Route::get('/teste-email', function () {
+   /*
+|--------------------------------------------------------------------------
+| ✉️ Teste de Envio de E-mail
+|--------------------------------------------------------------------------
+*/
+Route::get('/teste-email', function () {
     try {
         \Illuminate\Support\Facades\Mail::raw(
-            'Olá! Este é um teste...',
+            'Olá! Este é um teste de envio de e-mail via Gmail no GlowTime 💅',
             function ($message) {
                 $message->to('teuemail@gmail.com')
                     ->subject('📩 Teste de Envio de E-mail - GlowTime');
@@ -139,8 +139,12 @@ Route::middleware(['auth'])->group(function () {
         return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
     }
 });
-
-// 🔧 Rota para criar admin no Railway (depois apagar)
+ 
+/*
+|--------------------------------------------------------------------------
+| 👑 Criar Admin Temporário (somente para teste)
+|--------------------------------------------------------------------------
+*/
 Route::get('/create-admin', function () {
     $user = \App\Models\User::create([
         'name' => 'Admin',
@@ -148,7 +152,5 @@ Route::get('/create-admin', function () {
         'password' => bcrypt('12345678'),
     ]);
 
-    return $user;
+    return "Usuário admin criado com sucesso:<br>Email: admin@admin.com<br>Senha: 12345678";
 });
-
-
