@@ -8,18 +8,16 @@
 
     <title>{{ config('app.name', 'GlowTime') }}</title>
 
-    @php
-        $manifestPath = public_path('build/manifest.json');
-        $cssFile = null;
-        $jsFile  = null;
+   @php
+    $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
 
-        if (file_exists($manifestPath)) {
-            $manifest = json_decode(file_get_contents($manifestPath), true);
+    $css = $manifest['resources/css/app.css']['file'] ?? null;
+@endphp
 
-            $cssFile = $manifest['resources/css/app.css']['file'] ?? null;
-            $jsFile  = $manifest['resources/js/app.js']['file'] ?? null;
-        }
-    @endphp
+@if ($css)
+    <link rel="stylesheet" href="/build/{{ $css }}">
+@endif
+
 
     @if ($cssFile)
         <link rel="stylesheet" href="/build/{{ $cssFile }}">

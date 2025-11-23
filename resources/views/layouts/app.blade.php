@@ -8,19 +8,15 @@
 
     {{-- ======= CARREGAR ASSETS DO VITE EM PRODUÇÃO ======= --}}
     @php
-        $manifestPath = public_path('build/manifest.json');
-        $cssFile = null;
-        $jsApp = null;
-        $jsCalendar = null;
+    $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
 
-        if (file_exists($manifestPath)) {
-            $manifest = json_decode(file_get_contents($manifestPath), true);
+    $css = $manifest['resources/css/app.css']['file'] ?? null;
+@endphp
 
-            $cssFile    = $manifest['resources/css/app.css']['file'] ?? null;
-            $jsApp      = $manifest['resources/js/app.js']['file'] ?? null;
-            $jsCalendar = $manifest['resources/js/calendar.js']['file'] ?? null;
-        }
-    @endphp
+@if ($css)
+    <link rel="stylesheet" href="/build/{{ $css }}">
+@endif
+
 
     {{-- CSS --}}
     @if ($cssFile)
