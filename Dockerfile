@@ -16,7 +16,7 @@ WORKDIR /var/www/html
 # Copia o código do projeto
 COPY . .
 
-# Instala dependências PHP (sem dev) e otimiza autoloader
+# Instala dependências PHP (sem dev) e otimiza autoload
 RUN composer install --no-dev --optimize-autoloader
 
 # Instala dependências JS e gera o build do Vite
@@ -36,25 +36,24 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html
 
-# Copia tudo o que foi construído no estágio builder
+# Copia tudo do estágio builder (já compilado)
 COPY --from=builder /var/www/html /var/www/html
 
 # Copia configs de Nginx e Supervisor
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-# Permissões Laravel
+# Copia o entrypoint
+COPY deploy/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Ajusta permissões Laravel
 RUN chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
-# Limpa caches do Laravel
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear && \
-    php artisan cache:clear
-
-# Porta exposta no container
+# Expõe a porta usada pelo Nginx
 EXPOSE 80
 
-# Inicia Supervisor (que vai subir php-fpm e nginx)
+ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["/usr/bin/supervisord", "-n"]
