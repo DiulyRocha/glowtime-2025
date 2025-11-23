@@ -125,21 +125,23 @@ Route::middleware(['auth'])->group(function () {
     | ✉️ Teste de Envio de E-mail
     |--------------------------------------------------------------------------
     */
-    Route::get('/teste-email', function () {
-        try {
-            \Illuminate\Support\Facades\Mail::raw(
-                'Olá! Este é um teste de envio de e-mail via Gmail no GlowTime 💅',
-                function ($message) {
-                    $message->to('teuemail@gmail.com')
-                        ->subject('📩 Teste de Envio de E-mail - GlowTime');
-                }
-            );
-            return '✅ E-mail enviado com sucesso!';
-        } catch (\Exception $e) {
-            return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
-        }
+   Route::get('/teste-email', function () {
+    try {
+        \Illuminate\Support\Facades\Mail::raw(
+            'Olá! Este é um teste...',
+            function ($message) {
+                $message->to('teuemail@gmail.com')
+                    ->subject('📩 Teste de Envio de E-mail - GlowTime');
+            }
+        );
+        return '✅ E-mail enviado com sucesso!';
+    } catch (\Exception $e) {
+        return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
+    }
+});
 
-        Route::get('/create-admin', function () {
+// 🔧 Rota para criar admin no Railway (depois apagar)
+Route::get('/create-admin', function () {
     $user = \App\Models\User::create([
         'name' => 'Admin',
         'email' => 'admin@admin.com',
@@ -150,5 +152,3 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-    });
-});
