@@ -43,12 +43,15 @@ COPY --from=builder /var/www/html /var/www/html
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY deploy/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 
-# Permissões
-RUN mkdir -p /var/run/php \
-    && chown -R www-data:www-data /var/run/php \
-    && chmod -R 775 /var/run/php \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Permissões Laravel
+RUN chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
+
+# Limpa caches do Laravel
+RUN php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear && \
+    php artisan cache:clear
 
 # Porta exposta no container
 EXPOSE 80
