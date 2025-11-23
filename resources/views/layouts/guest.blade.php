@@ -24,13 +24,20 @@
     @if ($cssFile)
         <link rel="stylesheet" href="/build/{{ $cssFile }}">
     @endif
-</head>
 
-<body class="font-sans bg-gray-100 antialiased">
+</head>
+<body class="font-sans antialiased bg-gray-100">
 
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
 
-        {{-- CONTEÚDO DO LOGIN/REGISTER --}}
+        {{-- LOGO --}}
+        <div>
+            <a href="/">
+                <x-application-logo class="w-20 h-20 text-gray-500" />
+            </a>
+        </div>
+
+        {{-- CONTAINER DO LOGIN --}}
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md sm:rounded-lg">
             {{ $slot }}
         </div>
