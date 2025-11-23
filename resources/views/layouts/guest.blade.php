@@ -7,50 +7,45 @@
 
     <title>{{ config('app.name', 'GlowTime') }}</title>
 
-    {{-- ======= CARREGAR ASSETS DO VITE EM PRODUÇÃO ======= --}}
+    {{-- Carregar build do Vite em produção --}}
     @php
         $manifestPath = public_path('build/manifest.json');
         $cssFile = null;
-        $jsFile = null;
+        $jsApp = null;
 
         if (file_exists($manifestPath)) {
             $manifest = json_decode(file_get_contents($manifestPath), true);
 
             $cssFile = $manifest['resources/css/app.css']['file'] ?? null;
-            $jsFile  = $manifest['resources/js/app.js']['file'] ?? null;
+            $jsApp   = $manifest['resources/js/app.js']['file'] ?? null;
         }
     @endphp
 
-    {{-- CSS --}}
     @if ($cssFile)
         <link rel="stylesheet" href="{{ asset('build/' . $cssFile) }}">
     @endif
 
-    {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 </head>
 
-<body class="font-sans text-gray-900 antialiased">
+<body class="font-sans text-gray-900 antialiased bg-gray-100">
 
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-        
-        {{-- LOGO --}}
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+
         <div>
             <a href="/">
                 <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
             </a>
         </div>
 
-        {{-- CARD DO FORM --}}
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-            @yield('content')
+            {{ $slot }}
         </div>
     </div>
 
-    {{-- JS --}}
-    @if ($jsFile)
-        <script type="module" src="{{ asset('build/' . $jsFile) }}"></script>
+    @if ($jsApp)
+        <script type="module" src="{{ asset('build/' . $jsApp) }}"></script>
     @endif
 
 </body>
