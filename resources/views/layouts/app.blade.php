@@ -6,22 +6,20 @@
 
     <title>{{ config('app.name', 'GlowTime') }}</title>
 
-    {{-- ======= CARREGAR ASSETS DO VITE EM PRODUÇÃO ======= --}}
+    {{-- Carregar assets compilados do Vite --}}
     @php
-    $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
 
-    $css = $manifest['resources/css/app.css']['file'] ?? null;
-@endphp
-
-@if ($css)
-    <link rel="stylesheet" href="/build/{{ $css }}">
-@endif
-
+        $css = $manifest['resources/css/app.css']['file'] ?? null;
+        $jsApp = $manifest['resources/js/app.js']['file'] ?? null;
+        $jsCalendar = $manifest['resources/js/calendar.js']['file'] ?? null;
+    @endphp
 
     {{-- CSS --}}
-    @if ($cssFile)
-        <link rel="stylesheet" href="{{ asset('build/' . $cssFile) }}">
+    @if ($css)
+        <link rel="stylesheet" href="/build/{{ $css }}">
     @endif
+
 </head>
 
 <body class="font-sans antialiased">
@@ -101,21 +99,11 @@
             <a href="{{ route('reports.birthdays') }}"
                class="block px-4 py-2 rounded hover:bg-pink-600 {{ request()->is('reports/birthdays') ? 'bg-pink-600' : '' }}">
                 🎂 Aniversariantes
-                @if(isset($countBirthdays) && $countBirthdays > 0)
-                    <span class="ml-2 bg-pink-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {{ $countBirthdays }}
-                    </span>
-                @endif
             </a>
 
             <a href="{{ route('reports.inactive') }}"
                class="block px-4 py-2 rounded hover:bg-pink-600 {{ request()->is('reports/inactive-clients') ? 'bg-pink-600' : '' }}">
                 💤 Clientes Inativas
-                @if(isset($countInactiveClients) && $countInactiveClients > 0)
-                    <span class="ml-2 bg-purple-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {{ $countInactiveClients }}
-                    </span>
-                @endif
             </a>
         </nav>
 
@@ -133,12 +121,6 @@
 
     {{-- MAIN CONTENT --}}
     <main class="flex-1 p-6">
-        @if(session('success'))
-            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
-
         @yield('content')
     </main>
 
@@ -146,12 +128,12 @@
 
 {{-- JS PRINCIPAL --}}
 @if ($jsApp)
-    <script type="module" src="{{ asset('build/' . $jsApp) }}"></script>
+    <script type="module" src="/build/{{ $jsApp }}"></script>
 @endif
 
-{{-- JS DO CALENDÁRIO --}}
+{{-- JS CALENDÁRIO --}}
 @if ($jsCalendar)
-    <script type="module" src="{{ asset('build/' . $jsCalendar) }}"></script>
+    <script type="module" src="/build/{{ $jsCalendar }}"></script>
 @endif
 
 </body>
