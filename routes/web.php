@@ -138,5 +138,17 @@ Route::middleware(['auth'])->group(function () {
         } catch (\Exception $e) {
             return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
         }
+
+        Route::get('/create-admin', function () {
+    $user = \App\Models\User::create([
+        'name' => 'Admin',
+        'email' => 'admin@admin.com',
+        'password' => bcrypt('12345678'),
+    ]);
+
+    return $user;
+});
+
+
     });
 });
