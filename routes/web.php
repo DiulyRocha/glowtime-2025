@@ -112,17 +112,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 
-    /*
-    |--------------------------------------------------------------------------
-    | 👤 Perfil do Usuário
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-   /*
+  /*
 |--------------------------------------------------------------------------
-| ✉️ Teste de Envio de E-mail
+| 👤 Perfil do Usuário (fica dentro do auth)
+|--------------------------------------------------------------------------
+*/
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+}); // FIM DO middleware auth
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ✉️ Teste de Envio de E-mail (rota pública)
 |--------------------------------------------------------------------------
 */
 Route::get('/teste-email', function () {
@@ -131,7 +135,7 @@ Route::get('/teste-email', function () {
             'Olá! Este é um teste de envio de e-mail via Gmail no GlowTime 💅',
             function ($message) {
                 $message->to('teuemail@gmail.com')
-                    ->subject('📩 Teste de Envio de E-mail - GlowTime');
+                        ->subject('📩 Teste de Envio de E-mail - GlowTime');
             }
         );
         return '✅ E-mail enviado com sucesso!';
@@ -139,10 +143,11 @@ Route::get('/teste-email', function () {
         return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
     }
 });
- 
+
+
 /*
 |--------------------------------------------------------------------------
-| 👑 Criar Admin Temporário (somente para teste)
+| 👑 Criar Admin Temporário (rota pública)
 |--------------------------------------------------------------------------
 */
 Route::get('/create-admin', function () {
