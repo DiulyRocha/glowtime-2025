@@ -26,18 +26,17 @@
     @endif
 
 </head>
-<body class="font-sans antialiased bg-gray-100">
+
+<body class="font-sans bg-gray-100 antialiased">
 
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
 
-        {{-- LOGO --}}
-        <div>
-            <a href="/">
-                <x-application-logo class="w-20 h-20 text-gray-500" />
-            </a>
+        {{-- TÍTULO SIMPLES PARA EVITAR ERROS --}}
+        <div class="text-3xl font-bold text-pink-600 mb-4">
+            GlowTime
         </div>
 
-        {{-- CONTAINER DO LOGIN --}}
+        {{-- CONTEÚDO DO LOGIN/REGISTER --}}
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md sm:rounded-lg">
             {{ $slot }}
         </div>
