@@ -55,6 +55,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 # Porta exposta
 EXPOSE 80
 RUN chmod -R 777 storage bootstrap/cache
+RUN php artisan optimize:clear
+RUN php artisan view:clear
 
 # Inicia Supervisor (que sobe php-fpm e nginx)
 CMD ["/usr/bin/supervisord", "-n"]
